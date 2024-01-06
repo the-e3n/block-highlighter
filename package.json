@@ -3,6 +3,8 @@
 	"displayName": "Block Popper",
 	"description": "Highlights everything covered by the currently selected line's indentation level.",
 	"version": "0.0.1",
+	"license": "MIT",
+	"icon": "icon.jpeg",
 	"engines": {
 		"vscode": "^1.85.0"
 	},
