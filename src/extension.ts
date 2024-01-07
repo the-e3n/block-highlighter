@@ -19,7 +19,7 @@ var lineTable = new Map(); // Line dict
 export function activate(context: vscode.ExtensionContext) {
   // Use the console to output diagnostic information (console.log) and errors (console.error)
   // This line of code will only be executed once when your extension is activated
-  let config = vscode.workspace.getConfiguration('blockPopper');
+  let config = vscode.workspace.getConfiguration('blockHighlighter');
   omitLanguages = config.get('omit', ['plaintext']);
   startingToken = config.get('startingToken', '{');
   endingToken = config.get('endingToken', '}');
@@ -238,7 +238,7 @@ class BlockHL {
       currentDecoration.dispose();
     }
     // Hard BG color
-    let config = vscode.workspace.getConfiguration('blockPopper');
+    let config = vscode.workspace.getConfiguration('blockHighlighter');
     let wholeLine: boolean = config.get('isWholeLine', true);
     let accentCurrent: boolean = config.get('accentCurrentLine', true);
     let preferThemeColor: boolean = config.get('preferThemeColor', true);
@@ -248,7 +248,7 @@ class BlockHL {
       '255',
       '.05',
     ]);
-    const highlightColor = new vscode.ThemeColor('blockPopper.highlight');
+    const highlightColor = new vscode.ThemeColor('blockHighlighter.highlight');
 
     let backgroundColor =
       typeof background === 'string'

@@ -1,7 +1,7 @@
 {
-  "name": "block-popper",
-  "displayName": "Block Popper",
-  "description": "Highlights everything covered by the currently selected line's indentation level.",
+  "name": "block-highlighter",
+  "displayName": "Block Highlighter (TS,JS)",
+  "description": "Highlights everything based on current selected block.",
   "version": "0.0.2",
   "license": "MIT",
   "icon": "icon.jpeg",
@@ -10,10 +10,11 @@
   },
   "publisher": "the-e3n",
   "categories": [
-    "Other"
+    "Other",
+    "Visualization"
   ],
   "activationEvents": [
-    "*"
+    "onStartupFinished"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -21,7 +22,7 @@
       "type": "object",
       "title": "Block Popper Configuration",
       "properties": {
-        "blockPopper.background": {
+        "blockHighlighter.background": {
           "type": "array",
           "default": [
             "10",
@@ -31,34 +32,34 @@
           ],
           "description": "RGBA array for block highlighting (Default [\"200\", \"100\", \"255\", \".05\"])"
         },
-        "blockPopper.isWholeLine": {
+        "blockHighlighter.isWholeLine": {
           "type": "boolean",
           "default": true,
           "description": "Highlight the whole line or just the text?"
         },
-        "blockPopper.accentCurrentLine": {
+        "blockHighlighter.accentCurrentLine": {
           "type": "boolean",
           "default": true,
           "description": "Highlight the line the cursor is in with a lighter color"
         },
-        "blockPopper.omit": {
+        "blockHighlighter.omit": {
           "type": "array",
           "default": [
             "plaintext"
           ],
           "description": "Array of file languageIDs that won't be parsed for indent highlighting"
         },
-        "blockPopper.startingToken": {
+        "blockHighlighter.startingToken": {
           "type": "string",
           "default": "{",
           "description": "Starting token/character that the extension will consider as start of the block"
         },
-        "blockPopper.endingToken": {
+        "blockHighlighter.endingToken": {
           "type": "string",
           "default": "}",
           "description": "Ending token/character that the extension will consider as end of the block"
         },
-        "blockPopper.lineTerminationToken": {
+        "blockHighlighter.lineTerminationToken": {
           "type": "string",
           "default": ";",
           "description": "Line Termination Token token/character that the extension will consider as end of the line."
@@ -67,7 +68,7 @@
     },
     "colors": [
       {
-        "id": "blockPopper.highlight",
+        "id": "blockHighlighter.highlight",
         "description": "Color for highlighting the current color",
         "defaults": {
           "dark": "#97fdff13",

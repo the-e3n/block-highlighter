@@ -1,6 +1,10 @@
-# Block Popper README
+<p align="center">
+  <img src="icon.jpeg" alt="drawing" width="50" />
+</p>
 
-Highlights the intented area that contains the
+## Block Highlighter (TS,JS) README
+
+Highlights the intended block of code that contains the
 cursor.
 
 ## Features
@@ -8,42 +12,25 @@ cursor.
 Highlight the selected block automatically like
 so:
 
-![Color is 150 red, 253 green, 255 blue, 0.04 alpha](usage.gif "Example")
+![Color is 10 red, 253 green, 255 blue, 0.04 alpha](usage.gif 'Example')
 
 ## Extension Settings
 
 This extension contributes the following settings:
 
-- `blockPopper.background`: Change the highlight
-  color
-- `blockPopper.omit`: Array of languages that will
+- `blockHighlighter.background`: Change the highlight
+  color. Format: `#ffffffaa` or `[10,253,255,0.05]`
+- `blockHighlighter.omit`: Array of languages that will
   not be parsed by this extension
-- `blockPopper.isWholeLine`: Option to highlight
+- `blockHighlighter.isWholeLine`: Option to highlight
   the entire line or only the text
-- `blockPopper.accentCurrentLine`: Option to
+- `blockHighlighter.accentCurrentLine`: Option to
   choose to accent the current line more intensely
   than the rest of the block
+- `blockHighlighter.startingToken`:Starting token/character that the extension will consider as start of the block. Default: `{`
+- `blockHighlighter.endingToken`: Ending token/character that the extension will consider as end of the block. Default: `}`
+- `blockHighlighter.lineTerminationToken`: Line Termination Token token/character that the extension will consider as end of the line. Default: `;`
 
 ## Known Issues
 
-**Improper indentation levels for lines with mixed
-whitespace:**
-
-Indenting the **same** line with a mixture of tabs
-and spaces causes improper behavior because of how
-VSC auto adjusts whitespace
-
-Example of issue:
-![AutoIndent issue](whitespace-issue.png "Improper mixed whitespace issue.")
-
-This extension does not parse syntax, it simply
-checks indentation levels.
-
-Unindented text is not highlighted; This is
-intentional.
-
-## Release Notes
-
-### 0.0.1
-
-Initial Commit
+- None, Currently but if you find any please let me know by raising an issue on github
