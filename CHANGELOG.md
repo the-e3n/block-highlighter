@@ -1,6 +1,6 @@
 # Change Log
 
-All notable changes to the "block-popper"
+All notable changes to the "block-highlighter"
 extension will be documented in this file.
 
 Check

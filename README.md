@@ -4,13 +4,22 @@
 
 ## Block Highlighter (TS,JS) README
 
-Highlights the intended block of code that contains the
+Highlights the current block of code that contains the
 cursor.
 
-## Features
+[Download 🔗](https://marketplace.visualstudio.com/items?itemName=the-e3n.block-highlighter)
 
-Highlight the selected block automatically like
-so:
+😤 No more looking for where brackets are and where this block ends
+
+🌈 Imagine this: Your cursor becomes the magic wand, and the code around it comes to life with vibrant highlights! 💡⚡️ Whether you're debugging, exploring, or just admiring your masterpiece, this extension adds a touch of brilliance to your coding experience.
+
+## 🚀 Features:
+
+- Dynamic highlighting based on cursor position
+
+- Customizable color for that personal touch
+
+- Effortless integration with your existing VSCode setup
 
 ![Color is 10 red, 253 green, 255 blue, 0.04 alpha](usage.gif 'Example')
 
