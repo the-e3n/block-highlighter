@@ -1,92 +1,102 @@
 {
-	"name": "block-popper",
-	"displayName": "Block Popper",
-	"description": "Highlights everything covered by the currently selected line's indentation level.",
-	"version": "0.0.1",
-	"license": "MIT",
-	"icon": "icon.jpeg",
-	"engines": {
-		"vscode": "^1.85.0"
-	},
-	"publisher": "the-e3n",
-	"categories": [
-		"Other"
-	],
-	"activationEvents": [
-		"onStartupFinished"
-	],
-	"main": "./out/extension.js",
-	"contributes": {
-		"configuration": {
-			"type": "object",
-			"title": "Block Popper Configuration",
-			"properties": {
-				"blockPopper.background": {
-					"type": "array",
-					"default": [
-						"200",
-						"100",
-						"255",
-						".05"
-					],
-					"description": "RGBA array for block highlighting (Default [\"200\", \"100\", \"255\", \".05\"])"
-				},
-				"blockPopper.isWholeLine": {
-					"type": "boolean",
-					"default": true,
-					"description": "Highlight the whole line or just the text?"
-				},
-				"blockPopper.accentCurrentLine": {
-					"type": "boolean",
-					"default": true,
-					"description": "Highlight the line the cursor is in with a lighter color"
-				},
-				"blockPopper.omit": {
-					"type": "array",
-					"default": [
-						"plaintext"
-					],
-					"description": "Array of file languageIDs that won't be parsed for indent highlighting"
-				},
-				"blockPopper.preferThemeColor": {
-					"type": "boolean",
-					"default": true,
-					"description": "Pick color from theme color instead of setting"
-				}
-			}
-		},
-		"colors": [
-			{
-				"id": "blockPopper.highlight",
-				"description": "Color for highlighting the current color",
-				"defaults": {
-					"dark": "#97fdff13",
-					"light": "#97a7ff06"
-				}
-			}
-		]
-	},
-	"scripts": {
-		"vscode:prepublish": "yarn run compile",
-		"compile": "tsc -p ./",
-		"watch": "tsc -watch -p ./",
-		"pretest": "yarn run compile && yarn run lint",
-		"lint": "eslint src --ext ts",
-		"test": "vscode-test"
-	},
-	"devDependencies": {
-		"@types/vscode": "^1.85.0",
-		"@types/mocha": "^10.0.6",
-		"@types/node": "18.x",
-		"@typescript-eslint/eslint-plugin": "^6.15.0",
-		"@typescript-eslint/parser": "^6.15.0",
-		"eslint": "^8.56.0",
-		"typescript": "^5.3.3",
-		"@vscode/test-cli": "^0.0.4",
-		"@vscode/test-electron": "^2.3.8"
-	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/the-e3n/block-popper"
-	}
+  "name": "block-popper",
+  "displayName": "Block Popper",
+  "description": "Highlights everything covered by the currently selected line's indentation level.",
+  "version": "0.0.2",
+  "license": "MIT",
+  "icon": "icon.jpeg",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "publisher": "the-e3n",
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "*"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "configuration": {
+      "type": "object",
+      "title": "Block Popper Configuration",
+      "properties": {
+        "blockPopper.background": {
+          "type": "array",
+          "default": [
+            "10",
+            "253",
+            "255",
+            ".05"
+          ],
+          "description": "RGBA array for block highlighting (Default [\"200\", \"100\", \"255\", \".05\"])"
+        },
+        "blockPopper.isWholeLine": {
+          "type": "boolean",
+          "default": true,
+          "description": "Highlight the whole line or just the text?"
+        },
+        "blockPopper.accentCurrentLine": {
+          "type": "boolean",
+          "default": true,
+          "description": "Highlight the line the cursor is in with a lighter color"
+        },
+        "blockPopper.omit": {
+          "type": "array",
+          "default": [
+            "plaintext"
+          ],
+          "description": "Array of file languageIDs that won't be parsed for indent highlighting"
+        },
+        "blockPopper.startingToken": {
+          "type": "string",
+          "default": "{",
+          "description": "Starting token/character that the extension will consider as start of the block"
+        },
+        "blockPopper.endingToken": {
+          "type": "string",
+          "default": "}",
+          "description": "Ending token/character that the extension will consider as end of the block"
+        },
+        "blockPopper.lineTerminationToken": {
+          "type": "string",
+          "default": ";",
+          "description": "Line Termination Token token/character that the extension will consider as end of the line."
+        }
+      }
+    },
+    "colors": [
+      {
+        "id": "blockPopper.highlight",
+        "description": "Color for highlighting the current color",
+        "defaults": {
+          "dark": "#97fdff13",
+          "light": "#97a7ff06"
+        }
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "yarn run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "yarn run compile && yarn run lint",
+    "lint": "eslint src --ext ts",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "18.x",
+    "@typescript-eslint/eslint-plugin": "^6.15.0",
+    "@typescript-eslint/parser": "^6.15.0",
+    "eslint": "^8.56.0",
+    "typescript": "^5.3.3",
+    "@vscode/test-cli": "^0.0.4",
+    "@vscode/test-electron": "^2.3.8"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/the-e3n/block-popper"
+  }
 }
