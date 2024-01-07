@@ -2,7 +2,7 @@
   "name": "block-highlighter",
   "displayName": "Block Highlighter (TS,JS)",
   "description": "Highlights everything based on current selected block.",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "license": "MIT",
   "icon": "icon.jpeg",
   "engines": {

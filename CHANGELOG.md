@@ -14,3 +14,7 @@ Initial Release
 ## [v0.0.2]
 
 - Change method of highlighting from tabs to block
+
+## [v0.0.3]
+
+- Update readme and gif
