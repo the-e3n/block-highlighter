@@ -1,8 +1,8 @@
 {
   "name": "block-highlighter",
-  "displayName": "Block Highlighter (TS,JS)",
+  "displayName": "Block Highlighter",
   "description": "Highlights everything based on current selected block.",
-  "version": "0.0.3",
+  "version": "1.0.0",
   "license": "MIT",
   "icon": "icon.jpeg",
   "engines": {

@@ -18,3 +18,8 @@ Initial Release
 ## [v0.0.3]
 
 - Update readme and gif
+
+## [v1.0.0]
+
+- Change the parser to highlight based on the current block instead of the endOf line character
+- Add support for multiple languages using language specific configuration
