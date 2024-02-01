@@ -154,12 +154,10 @@ function highlightRange(editor: vscode.TextEditor, range: vscode.Range) {
   let config = vscode.workspace.getConfiguration('blockHighlighter');
   let wholeLine: boolean = config.get('isWholeLine', true);
   let accentCurrent: boolean = config.get('accentCurrentLine', true);
-  let preferThemeColor: boolean = config.get('preferThemeColor', true);
-  let background: number[] | string = config.get(
+  let background: number[] | string = config.get<string | number[]>(
     'background',
-    [10, 253, 255, 0.05],
+    '#97fdff13',
   );
-  const highlightColor = new vscode.ThemeColor('blockHighlighter.highlight');
 
   let backgroundColor =
     typeof background === 'string'
@@ -169,13 +167,13 @@ function highlightRange(editor: vscode.TextEditor, range: vscode.Range) {
   highlightDecoration = vscode.window.createTextEditorDecorationType(<
     vscode.DecorationRenderOptions
   >{
-    backgroundColor: preferThemeColor ? highlightColor : backgroundColor,
+    backgroundColor,
     isWholeLine: wholeLine,
   });
   currentDecoration = vscode.window.createTextEditorDecorationType(<
     vscode.DecorationRenderOptions
   >{
-    backgroundColor: preferThemeColor ? highlightColor : backgroundColor,
+    backgroundColor,
     isWholeLine: wholeLine,
   });
 

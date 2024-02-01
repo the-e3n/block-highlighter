@@ -36,9 +36,9 @@ This extension contributes the following settings:
 - `blockHighlighter.accentCurrentLine`: Option to
   choose to accent the current line more intensely
   than the rest of the block
-- `blockHighlighter.startingToken`:Starting token/character that the extension will consider as start of the block. Default: `{`
-- `blockHighlighter.endingToken`: Ending token/character that the extension will consider as end of the block. Default: `}`
-- `blockHighlighter.lineTerminationToken`: Line Termination Token token/character that the extension will consider as end of the line. Default: `;`
+- `blockHighlighter.openingBrackets`:Starting token/character that the extension will consider as start of the block. Default:
+  `["{","[","("]`
+- `blockHighlighter.closingBrackets`: Map of starting tokens to Ending token/character that the extension will consider as end of the block. Default: `{"{": "}","[": "]","(": ")"}`
 
 ## Known Issues
 

@@ -2,7 +2,7 @@
   "name": "block-highlighter",
   "displayName": "Block Highlighter",
   "description": "Highlights everything based on current selected block.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "MIT",
   "icon": "icon.jpeg",
   "engines": {
@@ -20,7 +20,7 @@
   "contributes": {
     "configuration": {
       "type": "object",
-      "title": "Block Highlighter Configuration",
+      "title": "Block Highlighter",
       "properties": {
         "blockHighlighter.background": {
           "anyOf": [
@@ -34,13 +34,8 @@
           "items": {
             "type": "number"
           },
-          "default": [
-            10,
-            253,
-            255,
-            0.05
-          ],
-          "description": "RGBA array for block highlighting (Default [\"10\", \"253\", \"255\", \".05\"])",
+          "default": "#97fdff13",
+          "description": "RGBA array (`[r,g,b,a]`) (or hex color string `#rrggbbaa`) for block highlighting (Default '#97fdff13')",
           "order": 0,
           "scope": "language-overridable",
           "maxItems": 4,
@@ -55,7 +50,7 @@
         "blockHighlighter.accentCurrentLine": {
           "type": "boolean",
           "default": true,
-          "description": "Highlight the line the cursor is in with a lighter color",
+          "description": "Accent the current line more intensely than the rest of the block",
           "order": 2
         },
         "blockHighlighter.omit": {
@@ -103,17 +98,7 @@
           "(": ")"
         }
       }
-    },
-    "colors": [
-      {
-        "id": "blockHighlighter.highlight",
-        "description": "Color for highlighting the current color",
-        "defaults": {
-          "dark": "#97fdff13",
-          "light": "#97a7ff06"
-        }
-      }
-    ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "yarn run compile",
