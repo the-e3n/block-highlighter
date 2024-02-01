@@ -1,8 +1,8 @@
 {
   "name": "block-highlighter",
-  "displayName": "Block Highlighter (TS,JS)",
+  "displayName": "Block Highlighter",
   "description": "Highlights everything based on current selected block.",
-  "version": "0.0.3",
+  "version": "1.0.1",
   "license": "MIT",
   "icon": "icon.jpeg",
   "engines": {
@@ -14,68 +14,91 @@
     "Visualization"
   ],
   "activationEvents": [
-    "onStartupFinished"
+    "*"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "configuration": {
       "type": "object",
-      "title": "Block Popper Configuration",
+      "title": "Block Highlighter",
       "properties": {
         "blockHighlighter.background": {
-          "type": "array",
-          "default": [
-            "10",
-            "253",
-            "255",
-            ".05"
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array"
+            }
           ],
-          "description": "RGBA array for block highlighting (Default [\"200\", \"100\", \"255\", \".05\"])"
+          "items": {
+            "type": "number"
+          },
+          "default": "#97fdff13",
+          "description": "RGBA array (`[r,g,b,a]`) (or hex color string `#rrggbbaa`) for block highlighting (Default '#97fdff13')",
+          "order": 0,
+          "scope": "language-overridable",
+          "maxItems": 4,
+          "minItems": 4
         },
         "blockHighlighter.isWholeLine": {
           "type": "boolean",
           "default": true,
-          "description": "Highlight the whole line or just the text?"
+          "description": "Highlight the whole line or just the text?",
+          "order": 1
         },
         "blockHighlighter.accentCurrentLine": {
           "type": "boolean",
           "default": true,
-          "description": "Highlight the line the cursor is in with a lighter color"
+          "description": "Accent the current line more intensely than the rest of the block",
+          "order": 2
         },
         "blockHighlighter.omit": {
           "type": "array",
           "default": [
             "plaintext"
           ],
-          "description": "Array of file languageIDs that won't be parsed for indent highlighting"
+          "description": "Array of file languageIDs that won't be parsed for highlighting",
+          "order": 3
         },
-        "blockHighlighter.startingToken": {
-          "type": "string",
-          "default": "{",
-          "description": "Starting token/character that the extension will consider as start of the block"
+        "blockHighlighter.openingBrackets": {
+          "type": "array",
+          "default": [
+            "{",
+            "[",
+            "("
+          ],
+          "description": "Array of opening brackets",
+          "scope": "language-overridable",
+          "order": 4
         },
-        "blockHighlighter.endingToken": {
-          "type": "string",
-          "default": "}",
-          "description": "Ending token/character that the extension will consider as end of the block"
-        },
-        "blockHighlighter.lineTerminationToken": {
-          "type": "string",
-          "default": ";",
-          "description": "Line Termination Token token/character that the extension will consider as end of the line."
+        "blockHighlighter.closingBrackets": {
+          "type": "object",
+          "default": {
+            "{": "}",
+            "[": "]",
+            "(": ")"
+          },
+          "description": "Object of closing brackets",
+          "scope": "language-overridable",
+          "order": 5
         }
       }
     },
-    "colors": [
-      {
-        "id": "blockHighlighter.highlight",
-        "description": "Color for highlighting the current color",
-        "defaults": {
-          "dark": "#97fdff13",
-          "light": "#97a7ff06"
+    "configurationDefaults": {
+      "[javascript]": {
+        "blockHighlighter.openingBrackets": [
+          "{",
+          "[",
+          "("
+        ],
+        "blockHighlighter.closingBrackets": {
+          "{": "}",
+          "[": "]",
+          "(": ")"
         }
       }
-    ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "yarn run compile",
