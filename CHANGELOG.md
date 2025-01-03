@@ -28,3 +28,9 @@ Initial Release
 
 - Updated the readme to include the new features
 - Fixed a bug where the extension would not follow the background color set by the user (#1).
+
+## [v1.1.0]
+
+- Added support for highlighting in JSX/TSX files
+- Highlighting now works on react in both single and multi-line components
+- Added support for highlighting in React Native files
