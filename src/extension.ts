@@ -48,6 +48,12 @@ let closingBrackets: string[];
  * This variable is used to check if the current file is a React file or not
  */
 let isReact: boolean = false;
+
+/**
+ * This variable is used to store string elements
+ */
+let stringElements: string[] = ['"', "'", '`'];
+
 /**
  * This variable is used to store the JSX nodes
  */
@@ -126,6 +132,11 @@ export async function activate(context: vscode.ExtensionContext) {
   const configOpeningBrackets = config.get('openingBrackets', ['{', '[', '(']);
 
   /**
+   * List of string elements to ignore.
+   */
+  const stringLiterals = config.get('stringLiterals', ['"', "'", '`']);
+
+  /**
    * Map of opening brackets to their corresponding closing brackets.
    */
   const configClosingBrackets = config.get('closingBrackets', {
@@ -138,6 +149,7 @@ export async function activate(context: vscode.ExtensionContext) {
   openingBrackets = configOpeningBrackets;
   closingBracketsMap = configClosingBrackets;
   closingBrackets = Object.values(configClosingBrackets);
+  stringElements = stringLiterals;
 
   if (activeEditor) {
     const range = findBrackets(activeEditor, activeEditor.document);
@@ -180,6 +192,7 @@ export async function activate(context: vscode.ExtensionContext) {
           '(': ')',
         });
         closingBrackets = Object.values(closingBracketsMap);
+        stringElements = config.get('stringLiterals', ['"', "'", '`']);
         logger.logUsage('configuration-changed', {
           config,
         });
@@ -211,6 +224,7 @@ function findBrackets(
     new vscode.Range(top.pos, bottom.end),
     ...(ranges ? ranges : []),
   ];
+
   const currentRange = allRanges.reduce((smallest, current) => {
     if (!smallest) return current;
     const smallestSize =
@@ -242,6 +256,8 @@ function findBottom(
 ) {
   let lineIndex = stack[0] ? stack[0].pos.line : editor.selection.active.line;
 
+  const stringStack: string[] = [];
+
   for (let i = lineIndex; i < document.lineCount; i++) {
     const line = document.lineAt(i);
     const lineText = line.text;
@@ -250,6 +266,15 @@ function findBottom(
       stack[0] && i === stack[0].pos.line ? stack[0].pos.character + 1 : 0;
     for (; j < textLength; j++) {
       const char = lineText[j];
+      if (stringElements.includes(char)) {
+        const last = stringStack[stringStack.length - 1];
+        if (last === char) {
+          stringStack.pop();
+        } else if (last !== char) {
+          stringStack.push(char);
+        }
+      }
+      if (stringStack.length > 0) continue;
 
       if (openingBrackets.includes(char)) {
         stack.push({
@@ -277,6 +302,7 @@ function findTop(editor: vscode.TextEditor, document: vscode.TextDocument) {
   }[] = [];
 
   let lineIndex = editor.selection.active.line;
+  const stringStack: string[] = [];
 
   for (let i = lineIndex; i >= 0; i--) {
     const line = document.lineAt(i);
@@ -285,6 +311,16 @@ function findTop(editor: vscode.TextEditor, document: vscode.TextDocument) {
 
     for (let j = textLength - 1; j >= 0; j--) {
       const char = lineText[j];
+
+      if (stringElements.includes(char)) {
+        const last = stringStack[stringStack.length - 1];
+        if (last === char) {
+          stringStack.pop();
+        } else if (last !== char) {
+          stringStack.push(char);
+        }
+      }
+      if (stringStack.length > 0) continue;
 
       if (closingBrackets.includes(char)) {
         stack.push({
