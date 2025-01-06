@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "esbuild.js",
+  "sourceRoot": "",
+  "sources": [
+    "esbuild.ts"
+  ],
+  "names": [],
+  "mappings": ""
+}

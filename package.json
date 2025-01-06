@@ -2,12 +2,22 @@
   "name": "block-highlighter",
   "displayName": "Block Highlighter",
   "description": "Highlights everything based on current selected block.",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "license": "MIT",
   "icon": "icon.jpeg",
   "engines": {
     "vscode": "^1.85.0"
   },
+  "keywords": [
+    "block highlighter",
+    "highlight",
+    "block",
+    "highlighter",
+    "syntax highlighter",
+    "code highlighter",
+    "code blocks",
+    "code block highlighter"
+  ],
   "publisher": "the-e3n",
   "categories": [
     "Other",
@@ -16,7 +26,7 @@
   "activationEvents": [
     "onStartupFinished"
   ],
-  "main": "./out/extension.js",
+  "main": "./dist/extension.js",
   "contributes": {
     "configuration": {
       "type": "object",
@@ -101,14 +111,17 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "yarn run compile",
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
+    "vscode:prepublish": "yarn run package",
+    "compile": "yarn check-types && node esbuild.js",
+    "watch": "npm-run-all -p watch:*",
     "pretest": "yarn run compile && yarn run lint",
     "lint": "eslint src --ext ts",
     "test": "vscode-test",
-    "package": "vsce package",
-    "publish": "vsce publish"
+    "publish": "vsce publish",
+    "check-types": "tsc --noEmit",
+    "watch:esbuild": "node esbuild.js --watch",
+    "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
+    "package": "yarn check-types && node esbuild.js --production"
   },
   "devDependencies": {
     "@types/babel__traverse": "^7.20.6",
@@ -119,7 +132,9 @@
     "@typescript-eslint/parser": "^8.19.0",
     "@vscode/test-cli": "^0.0.10",
     "@vscode/test-electron": "^2.3.8",
+    "esbuild": "^0.24.2",
     "eslint": "^9.17.0",
+    "npm-run-all": "^4.1.5",
     "typescript": "^5.7.2"
   },
   "repository": {
@@ -128,6 +143,7 @@
   },
   "dependencies": {
     "@babel/parser": "^7.26.3",
-    "@babel/traverse": "^7.26.4"
+    "@babel/traverse": "^7.26.4",
+    "posthog-node": "^4.3.2"
   }
 }

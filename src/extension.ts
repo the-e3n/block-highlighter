@@ -3,6 +3,25 @@ import { parse } from '@babel/parser';
 import traverse, { Node } from '@babel/traverse';
 import { createHash } from 'node:crypto';
 import * as vscode from 'vscode';
+import { PostHog } from 'posthog-node';
+
+const client = new PostHog('phc_Mmmiz2odVAfinNCFNZoOvoQG9tUq5laDeIaFLx2utJi', {
+  host: 'https://us.i.posthog.com',
+  flushAt: 1,
+  flushInterval: 1000,
+});
+
+const logger = vscode.env.createTelemetryLogger({
+  async sendEventData(eventName, data) {
+    await trackEvent(eventName, data);
+  },
+  async sendErrorData(error, data) {
+    await trackEvent('error', { error, data });
+  },
+  async flush() {
+    await client.flush();
+  },
+});
 
 /**
  * This variable is used to store the decoration type for the highlighted block
@@ -39,11 +58,45 @@ let JSXNodes: Node[] = [];
  *
  * @param context - The extension context provided by VS Code.
  */
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
+  context.globalState.setKeysForSync(['shownRatingMessage']);
   /**
    * Configuration object for the 'blockHighlighter' settings.
    */
   let config = vscode.workspace.getConfiguration('blockHighlighter');
+
+  const shownRatingMessage = context.globalState.get(
+    'shownRatingMessage',
+    false,
+  );
+
+  if (!shownRatingMessage) {
+    const rate = await vscode.window.showInformationMessage(
+      'Welcome to Block Highlighter! 🎉',
+      'Rate us on the VS Code Marketplace',
+    );
+    if (rate) {
+      vscode.env.openExternal(
+        vscode.Uri.parse(
+          'https://marketplace.visualstudio.com/items?itemName=the-e3n.block-highlighter&ssr=false#review-details',
+        ),
+      );
+    }
+    context.globalState.update('shownRatingMessage', true);
+  }
+
+  if (vscode.env.isNewAppInstall) {
+    logger.logUsage('new-install', {
+      config,
+    });
+  }
+
+  logger.logUsage('activated', {
+    version: vscode.version,
+    platform: process.platform,
+    config,
+  });
+  // log to output channel
 
   /**
    * List of language IDs to omit from highlighting.
@@ -95,14 +148,44 @@ export function activate(context: vscode.ExtensionContext) {
     }
   }
 
-  vscode.window.onDidChangeTextEditorSelection((event) => {
-    const range = findBrackets(event.textEditor, event.textEditor.document);
-    if (range) {
-      highlightRange(event.textEditor, range);
-    } else {
-      unhighlightAll();
-    }
-  });
+  context.subscriptions.push(
+    vscode.window.onDidChangeTextEditorSelection((event) => {
+      const range = findBrackets(event.textEditor, event.textEditor.document);
+      if (range) {
+        highlightRange(event.textEditor, range);
+      } else {
+        unhighlightAll();
+      }
+      isReact = ['javascriptreact', 'typescriptreact'].includes(
+        event.textEditor.document.languageId,
+      );
+      if (
+        event.textEditor.document.languageId &&
+        omit &&
+        omit.includes(event.textEditor.document.languageId)
+      ) {
+        unhighlightAll();
+        return;
+      }
+    }),
+    logger,
+    vscode.workspace.onDidChangeConfiguration((event) => {
+      if (event.affectsConfiguration('blockHighlighter')) {
+        config = vscode.workspace.getConfiguration('blockHighlighter');
+        omit = config.get('omit', ['markdown', 'plaintext']);
+        openingBrackets = config.get('openingBrackets', ['{', '[', '(']);
+        closingBracketsMap = config.get('closingBrackets', {
+          '{': '}',
+          '[': ']',
+          '(': ')',
+        });
+        closingBrackets = Object.values(closingBracketsMap);
+        logger.logUsage('configuration-changed', {
+          config,
+        });
+      }
+    }),
+  );
 }
 
 // this method is called when your extension is deactivated
@@ -112,6 +195,7 @@ function findBrackets(
   editor: vscode.TextEditor,
   document: vscode.TextDocument,
 ) {
+  const start = performance.now();
   const ranges = isReact ? findJSXBlock(editor, document) : [];
 
   const top = findTop(editor, document);
@@ -140,6 +224,10 @@ function findBrackets(
       (current.end.line - current.start.line) * Number.MAX_SAFE_INTEGER;
     return currentSize < smallestSize ? current : smallest;
   }, allRanges[0]);
+
+  const end = performance.now();
+  const delta = end - start;
+  console.debug(`[Block Highlighter] Found range in ${delta.toFixed(4)}ms.`);
 
   return currentRange;
 }
@@ -258,17 +346,42 @@ function parseJSXElementsFromCode(document: vscode.TextDocument) {
   }
   hash = newHash;
   JSXNodes = [];
-  const ast = parse(code, {
-    allowAwaitOutsideFunction: true,
-    allowImportExportEverywhere: true,
-    strictMode: false,
-    plugins: ['jsx', 'typescript'],
-  });
-  traverse(ast, {
-    JSXElement(path) {
-      JSXNodes.push(path.node);
-    },
-  });
+
+  try {
+    const ast = parse(code, {
+      allowAwaitOutsideFunction: true,
+      allowImportExportEverywhere: true,
+      strictMode: false,
+      plugins: [
+        'jsx',
+        'typescript',
+        'decimal',
+        'classProperties',
+        'bigInt',
+        'dynamicImport',
+        'optionalChaining',
+        'nullishCoalescingOperator',
+        'decorators',
+        'exportDefaultFrom',
+        'optionalChaining',
+        'objectRestSpread',
+        'jsonStrings',
+        'functionBind',
+        'importMeta',
+      ],
+      allowReturnOutsideFunction: true,
+      attachComment: false,
+      errorRecovery: true,
+    });
+    traverse(ast, {
+      JSXElement(path) {
+        JSXNodes.push(path.node);
+      },
+    });
+  } catch (error) {
+    logger.logError('error-in-parseJSXElementsFromCode', { error });
+    console.debug(`[-] Error in parseJSXElementsFromCode: ${error}`);
+  }
   return JSXNodes;
 }
 
@@ -323,4 +436,12 @@ function unhighlightAll() {
   if (currentDecoration) {
     currentDecoration.dispose();
   }
+}
+
+async function trackEvent(event: string, properties?: Record<string, any>) {
+  client.capture({
+    event,
+    properties: properties || {},
+    distinctId: vscode.env.machineId,
+  });
 }
