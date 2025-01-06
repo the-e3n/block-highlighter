@@ -34,3 +34,10 @@ Initial Release
 - Added support for highlighting in JSX/TSX files
 - Highlighting now works on react in both single and multi-line components
 - Added support for highlighting in React Native files
+
+## [v1.2.0]
+
+- Changed the bundling method to use esbuild instead of default tsc
+- Added Basic Telemetry to track the number of users and config used.
+- Fixed a issue where the parser was giving error due to isReact flag not being updated on file change
+- Added Support for VSCode Web Version due to change in bundling method
