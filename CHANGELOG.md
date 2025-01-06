@@ -41,3 +41,7 @@ Initial Release
 - Added Basic Telemetry to track the number of users and config used.
 - Fixed a issue where the parser was giving error due to isReact flag not being updated on file change
 - Added Support for VSCode Web Version due to change in bundling method
+
+## [v1.2.1]
+
+- FIX: Issue where bracket inside strings were considered and leading to unexpected behavior

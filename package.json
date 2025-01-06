@@ -2,7 +2,7 @@
   "name": "block-highlighter",
   "displayName": "Block Highlighter",
   "description": "Highlights everything based on current selected block.",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "license": "MIT",
   "icon": "icon.jpeg",
   "engines": {
@@ -24,7 +24,7 @@
     "Visualization"
   ],
   "activationEvents": [
-    "onStartupFinished"
+    "*"
   ],
   "main": "./dist/extension.js",
   "contributes": {
@@ -82,6 +82,17 @@
           "scope": "language-overridable",
           "order": 4
         },
+        "blockHighlighter.stringLiterals": {
+          "type": "array",
+          "default": [
+            "'",
+            "\"",
+            "`"
+          ],
+          "description": "Array of string literals. These will be ignored when highlighting blocks",
+          "scope": "language-overridable",
+          "order": 5
+        },
         "blockHighlighter.closingBrackets": {
           "type": "object",
           "default": {
@@ -91,7 +102,7 @@
           },
           "description": "Object of closing brackets",
           "scope": "language-overridable",
-          "order": 5
+          "order": 6
         }
       }
     },
@@ -106,7 +117,12 @@
           "{": "}",
           "[": "]",
           "(": ")"
-        }
+        },
+        "blockHighlighter.stringLiterals": [
+          "'",
+          "\"",
+          "`"
+        ]
       }
     }
   },
