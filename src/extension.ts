@@ -100,7 +100,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
   logger.logUsage('activated', {
     version: vscode.version,
-    platform: process.platform,
+    platform: typeof process !== 'undefined' ? process.platform : 'web/unknown',
     config,
   });
   // log to output channel
