@@ -50,3 +50,7 @@ Initial Release
 
 - ADD: Support for web version of vscode
 - ADD: Telemetry Notice in README
+
+## [v1.2.3]
+
+- FIX: Issue where the extension would not work in the web version of vscode due to dependency on process
