@@ -63,3 +63,7 @@ For the changelog, please refer to the [CHANGELOG.md](CHANGELOG.md) file
 ## Known Issues
 
 - None, Currently but if you find any please let me know by raising an issue on github
+
+## Basic Telemetry Collection
+
+This extension collects basic telemetry provided by VSCode to track the number of users and the configuration used. This data is used to improve the extension and provide better support to the users. No personal data is collected. You can opt-out of telemetry by disabling it in vscode settings. You can also get your data or ask to delete it by contacting me through github.

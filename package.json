@@ -2,7 +2,7 @@
   "name": "block-highlighter",
   "displayName": "Block Highlighter",
   "description": "Highlights everything based on current selected block.",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "license": "MIT",
   "icon": "icon.jpeg",
   "engines": {
@@ -27,6 +27,7 @@
     "*"
   ],
   "main": "./dist/extension.js",
+  "browser": "./dist/extension.js",
   "contributes": {
     "configuration": {
       "type": "object",

@@ -9,6 +9,7 @@ const client = new PostHog('phc_Mmmiz2odVAfinNCFNZoOvoQG9tUq5laDeIaFLx2utJi', {
   host: 'https://us.i.posthog.com',
   flushAt: 1,
   flushInterval: 1000,
+  disableGeoip: false,
 });
 
 const logger = vscode.env.createTelemetryLogger({

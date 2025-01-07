@@ -45,3 +45,8 @@ Initial Release
 ## [v1.2.1]
 
 - FIX: Issue where bracket inside strings were considered and leading to unexpected behavior
+
+## [v1.2.2]
+
+- ADD: Support for web version of vscode
+- ADD: Telemetry Notice in README
