@@ -54,3 +54,8 @@ Initial Release
 ## [v1.2.3]
 
 - FIX: Issue where the extension would not work in the web version of vscode due to dependency on process
+
+## [v1.2.4]
+
+- ADD: Functionality to ignore single line and multi line comments
+- FIX: Issue where if a comment includes a ' quote it broke the highlighting

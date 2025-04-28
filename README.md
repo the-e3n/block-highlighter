@@ -31,7 +31,10 @@ cursor.
 - No more squinting at brackets or scrolling up and down to find the start and end of a block
 - Zero configuration needed for most languages
 
+### EXAMPLES
+
 ![Color is 10 red, 253 green, 255 blue, 0.04 alpha](usage.gif 'Example')
+![Color is 10 red, 253 green, 255 blue, 0.04 alpha](react-usage.gif 'Example')
 
 ## Extension Settings
 
@@ -49,12 +52,23 @@ This extension contributes the following settings:
 - `blockHighlighter.openingBrackets`:Starting token/character that the extension will consider as start of the block. Default:
   `["{","[","("]`
 - `blockHighlighter.closingBrackets`: Map of starting tokens to Ending token/character that the extension will consider as end of the block. Default: `{"{": "}","[": "]","(": ")"}`
+- `blockHighlighter.singleLineComment`: Array of
+  single line comment tokens that will be ignored by the extension. Default: `["//"]`
+- `blockHighlighter.multiLineCommentStart`: Array of
+  multi line comment tokens that will be ignored by the extension. Default: `["/*"]`
+- `blockHighlighter.multiLineCommentEnd`: Array of
+  multi line comment tokens that will be ignored by the extension. Default: `["*/"]`
+- `blockHighlighter.stringLiterals`: Array of string
+  literal tokens whose pairs will be ignored by the extension. Default: `` ['"', "'", '`'] ``
 
 ## Supported Languages
 
 - JavaScript like languages `(JS,TS,C,Java,C=++ etc where {,},[,],(,) are used as block delimiters)`
 - JSX/TSX `(Highlighting is based on the Current selected component)`
 - React Native `(Same as JSX/TSX)`
+- Any other language that has some form of block delimiters
+- The extension is language agnostic and will work with any language that has some form of block delimiters. The default settings should work for most languages, but you can customize the settings to suit your needs.
+- HTML/CSS/XML - The extension will not work with these languages for now. If you want support for these languages, please raise an issue on github and I will try to add support for them.
 
 ## Changelog
 

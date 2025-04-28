@@ -2,7 +2,7 @@
   "name": "block-highlighter",
   "displayName": "Block Highlighter",
   "description": "Highlights everything based on current selected block.",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "license": "MIT",
   "icon": "icon.jpeg",
   "engines": {

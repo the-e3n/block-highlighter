@@ -56,6 +56,21 @@ let isReact: boolean = false;
 let stringElements: string[] = ['"', "'", '`'];
 
 /**
+ * This indexes the start of single line comments
+ */
+let singleLineCommentStart = ['//', '#'];
+
+/**
+ * This indexes the start of multi line comments
+ */
+let multiLineCommentStart = ['/*'];
+
+/**
+ * This indexes the end of multi line comments
+ */
+let multiLineCommentEnd = ['*/'];
+
+/**
  * This variable is used to store the JSX nodes
  */
 let JSXNodes: Node[] = [];
@@ -146,11 +161,26 @@ export async function activate(context: vscode.ExtensionContext) {
     '(': ')',
   });
 
+  const singleLineComment = config.get('singleLineComment', ['//', '#']);
+  const multiLineCommentStartConfig = config.get('multiLineCommentStart', [
+    '/*',
+    '"""',
+    "'''",
+  ]);
+  const multiLineCommentEndConfig = config.get('multiLineCommentEnd', [
+    '*/',
+    '"""',
+    "'''",
+  ]);
+
   // Set global variables
   openingBrackets = configOpeningBrackets;
   closingBracketsMap = configClosingBrackets;
   closingBrackets = Object.values(configClosingBrackets);
   stringElements = stringLiterals;
+  singleLineCommentStart = singleLineComment;
+  multiLineCommentStart = multiLineCommentStartConfig;
+  multiLineCommentEnd = multiLineCommentEndConfig;
 
   if (activeEditor) {
     const range = findBrackets(activeEditor, activeEditor.document);
@@ -163,12 +193,6 @@ export async function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(
     vscode.window.onDidChangeTextEditorSelection((event) => {
-      const range = findBrackets(event.textEditor, event.textEditor.document);
-      if (range) {
-        highlightRange(event.textEditor, range);
-      } else {
-        unhighlightAll();
-      }
       isReact = ['javascriptreact', 'typescriptreact'].includes(
         event.textEditor.document.languageId,
       );
@@ -180,8 +204,14 @@ export async function activate(context: vscode.ExtensionContext) {
         unhighlightAll();
         return;
       }
+      const range = findBrackets(event.textEditor, event.textEditor.document);
+      if (range) {
+        highlightRange(event.textEditor, range);
+      } else {
+        unhighlightAll();
+      }
     }),
-    logger,
+
     vscode.workspace.onDidChangeConfiguration((event) => {
       if (event.affectsConfiguration('blockHighlighter')) {
         config = vscode.workspace.getConfiguration('blockHighlighter');
@@ -194,6 +224,9 @@ export async function activate(context: vscode.ExtensionContext) {
         });
         closingBrackets = Object.values(closingBracketsMap);
         stringElements = config.get('stringLiterals', ['"', "'", '`']);
+        singleLineCommentStart = config.get('singleLineComment', ['//', '#']);
+        multiLineCommentStart = config.get('multiLineCommentStart', ['/*']);
+        multiLineCommentEnd = config.get('multiLineCommentEnd', ['*/']);
         logger.logUsage('configuration-changed', {
           config,
         });
@@ -258,13 +291,34 @@ function findBottom(
   let lineIndex = stack[0] ? stack[0].pos.line : editor.selection.active.line;
 
   const stringStack: string[] = [];
-
+  let insideMultilineComment = false;
   for (let i = lineIndex; i < document.lineCount; i++) {
     const line = document.lineAt(i);
     const lineText = line.text;
     const textLength = lineText.length;
     let j =
       stack[0] && i === stack[0].pos.line ? stack[0].pos.character + 1 : 0;
+    const trimmedLineText = lineText.trim();
+
+    // Skip empty lines and single line comments
+    if (
+      trimmedLineText === '' ||
+      singleLineCommentStart.some((c) => trimmedLineText.startsWith(c))
+    ) {
+      continue;
+    }
+    // Toggle the inside multiline comment flag
+    if (multiLineCommentStart.some((c) => trimmedLineText.startsWith(c))) {
+      insideMultilineComment = !insideMultilineComment;
+      continue;
+    }
+    // Toggle the inside multiline comment flag
+    if (multiLineCommentEnd.some((c) => trimmedLineText.startsWith(c))) {
+      insideMultilineComment = !insideMultilineComment;
+      continue;
+    }
+    if (insideMultilineComment) continue; // Skip lines inside multiline comments
+
     for (; j < textLength; j++) {
       const char = lineText[j];
       if (stringElements.includes(char)) {
@@ -304,10 +358,31 @@ function findTop(editor: vscode.TextEditor, document: vscode.TextDocument) {
 
   let lineIndex = editor.selection.active.line;
   const stringStack: string[] = [];
-
+  let insideMultilineComment = false;
   for (let i = lineIndex; i >= 0; i--) {
     const line = document.lineAt(i);
     const lineText = line.text;
+    const trimmedLineText = lineText.trim();
+
+    // Skip empty lines and single line comments
+    if (
+      trimmedLineText === '' ||
+      singleLineCommentStart.some((c) => trimmedLineText.startsWith(c))
+    ) {
+      continue;
+    }
+    // Toggle the inside multiline comment flag
+    if (multiLineCommentStart.some((c) => trimmedLineText.startsWith(c))) {
+      insideMultilineComment = !insideMultilineComment;
+      continue;
+    }
+    // Toggle the inside multiline comment flag
+    if (multiLineCommentEnd.some((c) => trimmedLineText.startsWith(c))) {
+      insideMultilineComment = !insideMultilineComment;
+      continue;
+    }
+    if (insideMultilineComment) continue; // Skip lines inside multiline comments
+
     const textLength = lineText.length;
 
     for (let j = textLength - 1; j >= 0; j--) {
