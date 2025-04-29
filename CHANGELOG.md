@@ -59,3 +59,10 @@ Initial Release
 
 - ADD: Functionality to ignore single line and multi line comments
 - FIX: Issue where if a comment includes a ' quote it broke the highlighting
+
+## [v1.2.5]
+
+- ADD: Code Tree shaking to reduce the size of the extension
+- ADD: Node Polyfill to support the web version of vscode
+- FIX: Issue where the extension would not activate if there were no active editors open at startup
+- FIX: Issue where the multiline comment syntax was used in the single line

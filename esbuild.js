@@ -1,4 +1,5 @@
-const esbuild = require('esbuild');
+import * as esbuild from 'esbuild';
+import { polyfillNode } from 'esbuild-plugin-polyfill-node';
 
 const production = process.argv.includes('--production');
 const watch = process.argv.includes('--watch');
@@ -11,11 +12,24 @@ async function main() {
     minify: production,
     sourcemap: !production,
     sourcesContent: false,
+    treeShaking: true,
     platform: 'node',
     outfile: 'dist/extension.js',
     external: ['vscode'],
     logLevel: 'silent',
     plugins: [
+      polyfillNode({
+        polyfills: {
+          crypto: true,
+        },
+        globals: {
+          navigator: true,
+          process: true,
+          Buffer: true,
+          global: true,
+          __dirname: true,
+        },
+      }),
       /* add to the end of plugins array */
       esbuildProblemMatcherPlugin,
     ],

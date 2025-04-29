@@ -81,6 +81,20 @@ let JSXNodes: Node[] = [];
  * @param context - The extension context provided by VS Code.
  */
 export async function activate(context: vscode.ExtensionContext) {
+  // Handle case where the extension is activated without an active editor or we are in a language that is omitted
+  context.subscriptions.push(
+    vscode.window.onDidChangeActiveTextEditor((editor) => {
+      if (!editor) return;
+      if (
+        editor?.document.languageId &&
+        omit &&
+        omit.includes(editor.document.languageId)
+      ) {
+        return;
+      }
+      activate(context);
+    }),
+  );
   context.globalState.setKeysForSync(['shownRatingMessage']);
   /**
    * Configuration object for the 'blockHighlighter' settings.
@@ -309,6 +323,10 @@ function findBottom(
     }
     // Toggle the inside multiline comment flag
     if (multiLineCommentStart.some((c) => trimmedLineText.startsWith(c))) {
+      // For multi-line comments syntax but it is in the same line
+      if (multiLineCommentEnd.some((c) => trimmedLineText.endsWith(c))) {
+        continue;
+      }
       insideMultilineComment = !insideMultilineComment;
       continue;
     }
@@ -373,6 +391,10 @@ function findTop(editor: vscode.TextEditor, document: vscode.TextDocument) {
     }
     // Toggle the inside multiline comment flag
     if (multiLineCommentStart.some((c) => trimmedLineText.startsWith(c))) {
+      // For multi-line comments syntax but it is in the same line
+      if (multiLineCommentEnd.some((c) => trimmedLineText.endsWith(c))) {
+        continue;
+      }
       insideMultilineComment = !insideMultilineComment;
       continue;
     }

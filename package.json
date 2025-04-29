@@ -2,7 +2,7 @@
   "name": "block-highlighter",
   "displayName": "Block Highlighter",
   "description": "Highlights everything based on current selected block.",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "license": "MIT",
   "icon": "icon.jpeg",
   "engines": {
@@ -138,7 +138,8 @@
     "check-types": "tsc --noEmit",
     "watch:esbuild": "node esbuild.js --watch",
     "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
-    "package": "yarn check-types && node esbuild.js --production"
+    "package": "yarn check-types && node esbuild.js --production",
+    "open-in-browser": "vscode-test-web --extensionDevelopmentPath=. ."
   },
   "devDependencies": {
     "@types/babel__traverse": "^7.20.6",
@@ -152,7 +153,8 @@
     "esbuild": "^0.24.2",
     "eslint": "^9.17.0",
     "npm-run-all": "^4.1.5",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "@vscode/test-web": "*"
   },
   "repository": {
     "type": "git",
@@ -161,6 +163,7 @@
   "dependencies": {
     "@babel/parser": "^7.26.3",
     "@babel/traverse": "^7.26.4",
+    "esbuild-plugin-polyfill-node": "^0.3.0",
     "posthog-node": "^4.3.2"
   }
 }
