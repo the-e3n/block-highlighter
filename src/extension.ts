@@ -82,19 +82,6 @@ let JSXNodes: Node[] = [];
  */
 export async function activate(context: vscode.ExtensionContext) {
   // Handle case where the extension is activated without an active editor or we are in a language that is omitted
-  context.subscriptions.push(
-    vscode.window.onDidChangeActiveTextEditor((editor) => {
-      if (!editor) return;
-      if (
-        editor?.document.languageId &&
-        omit &&
-        omit.includes(editor.document.languageId)
-      ) {
-        return;
-      }
-      activate(context);
-    }),
-  );
   context.globalState.setKeysForSync(['shownRatingMessage']);
   /**
    * Configuration object for the 'blockHighlighter' settings.

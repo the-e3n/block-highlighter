@@ -66,3 +66,11 @@ Initial Release
 - ADD: Node Polyfill to support the web version of vscode
 - FIX: Issue where the extension would not activate if there were no active editors open at startup
 - FIX: Issue where the multiline comment syntax was used in the single line
+
+## [v1.2.6]
+
+- FIX: Issue with multiple activation events causing the extension having flicker when highlighting
+
+## [v1.2.7]
+
+- REMOVE: The event listener for onDidChangeDocument as it was causing the extension to flicker when highlighting
