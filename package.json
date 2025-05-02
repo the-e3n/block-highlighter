@@ -2,7 +2,7 @@
   "name": "block-highlighter",
   "displayName": "Block Highlighter",
   "description": "Highlights everything based on current selected block.",
-  "version": "1.2.7",
+  "version": "2.0.0",
   "license": "MIT",
   "icon": "icon.jpeg",
   "engines": {
@@ -46,7 +46,32 @@
             "type": "number"
           },
           "default": "#97fdff13",
-          "description": "RGBA array (`[r,g,b,a]`) (or hex color string `#rrggbbaa`) for block highlighting (Default '#97fdff13')",
+          "description": "RGBA array (`[r,g,b,a]`) (or hex color string `#rrggbbaa`) or any css color for block highlighting (Default '#97fdff13')",
+          "order": 0,
+          "scope": "language-overridable",
+          "maxItems": 4,
+          "minItems": 4
+        },
+        "blockHighlighter.showBorder": {
+          "type": "boolean",
+          "default": false,
+          "description": "Show the border around left side of the block",
+          "order": 1
+        },
+        "blockHighlighter.border": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array"
+            }
+          ],
+          "items": {
+            "type": "number"
+          },
+          "default": "red",
+          "description": "RGBA array (`[r,g,b,a]`) (or hex color string `#rrggbbaa`) or any css color for border (Default 'red')",
           "order": 0,
           "scope": "language-overridable",
           "maxItems": 4,
@@ -104,6 +129,34 @@
           "description": "Object of closing brackets",
           "scope": "language-overridable",
           "order": 6
+        },
+        "blockHighlighter.singleLineCommentStart": {
+          "type": "array",
+          "default": [
+            "//",
+            "#"
+          ],
+          "description": "Array of single line comment start strings. These will be ignored when highlighting blocks",
+          "scope": "language-overridable",
+          "order": 6
+        },
+        "blockHighlighter.multiLineCommentStart": {
+          "type": "array",
+          "default": [
+            "/*"
+          ],
+          "description": "Array of multi line comment start strings. These block will be ignored when highlighting blocks",
+          "scope": "language-overridable",
+          "order": 7
+        },
+        "blockHighlighter.multiLineCommentEnd": {
+          "type": "array",
+          "default": [
+            "*/"
+          ],
+          "description": "Array of multi line comment end strings. These block will be ignored when highlighting blocks",
+          "scope": "language-overridable",
+          "order": 8
         }
       }
     },
@@ -123,6 +176,16 @@
           "'",
           "\"",
           "`"
+        ],
+        "blockHighlighter.singleLineCommentStart": [
+          "//",
+          "#"
+        ],
+        "blockHighlighter.multiLineCommentStart": [
+          "/*"
+        ],
+        "blockHighlighter.multiLineCommentEnd": [
+          "*/"
         ]
       }
     }
