@@ -1,9 +1,11 @@
+import { parse } from '@babel/parser';
 import traverse, { Node } from '@babel/traverse';
 import { createHash } from 'crypto';
+import { HTMLElement, parse as parseHTML } from 'node-html-parser';
 import * as vscode from 'vscode';
 import { Config } from './config';
+import { IndentHighlighter } from './indentHighlighter';
 import { logger } from './utils';
-import { parse } from '@babel/parser';
 
 export class BlockHighlighter {
   /**
@@ -25,6 +27,12 @@ export class BlockHighlighter {
    * This variable is used to store the JSX nodes
    */
   JSXNodes: Node[] = [];
+
+  /**
+   * Root Element for HTML Files
+   */
+  htmlRoot: HTMLElement | null = null;
+
   /**
    * This stores the config of the extension
    */
@@ -34,14 +42,38 @@ export class BlockHighlighter {
    * This variable is used to store the hash of the code
    */
   hash: string = '';
+
+  /**
+   * To avoid highlighting it on every keystroke
+   */
+  private debounceTimer: NodeJS.Timeout | null = null;
+
+  /**
+   * Indent Highlighter
+   */
+  indentHighlighter: IndentHighlighter;
+
+  subscriptions: vscode.Disposable[] = [];
+  private disposable: vscode.Disposable;
+
   constructor(config: Config) {
     this.config = config;
+    vscode.window.onDidChangeTextEditorSelection(
+      this.highlight,
+      this,
+      this.subscriptions,
+    );
+    this.indentHighlighter = new IndentHighlighter();
+    this.disposable = vscode.Disposable.from(
+      ...this.subscriptions,
+      this.indentHighlighter,
+    );
   }
   /**
    * This function is used to highlight the block of code
    * It finds the block of code and highlights it
    */
-  highlight() {
+  _highlight() {
     const activeEditor = vscode.window.activeTextEditor;
     if (!activeEditor) return;
     if (
@@ -50,6 +82,16 @@ export class BlockHighlighter {
       )
     ) {
       this.isReact = true; // Flag to indicate if the document is a React file.
+    }
+    if (activeEditor.document.languageId === 'html') {
+      return this.highlightHTMLBlock(activeEditor);
+    }
+    if (
+      ['python', 'yml', 'yaml', 'haskell'].includes(
+        activeEditor.document.languageId,
+      )
+    ) {
+      return this.highlightBasedOnIndent(activeEditor);
     }
     if (
       activeEditor?.document.languageId &&
@@ -68,6 +110,15 @@ export class BlockHighlighter {
     } else {
       this.unhighlightAll();
     }
+  }
+
+  highlight() {
+    if (this.debounceTimer) {
+      clearTimeout(this.debounceTimer);
+    }
+    this.debounceTimer = setTimeout(() => {
+      this._highlight();
+    }, 100); // Adjust delay as needed (e.g., 50–100ms is a good range)
   }
   /**
    * This function is used to find the block of code to highlight
@@ -391,9 +442,7 @@ export class BlockHighlighter {
       this.currentDecoration.dispose();
     }
 
-    this.highlightDecoration = vscode.window.createTextEditorDecorationType(<
-      vscode.DecorationRenderOptions
-    >{
+    this.highlightDecoration = vscode.window.createTextEditorDecorationType({
       backgroundColor: this.config.backgroundColor,
       isWholeLine: this.config.wholeLine,
       ...(this.config.showBorder && {
@@ -402,9 +451,7 @@ export class BlockHighlighter {
         borderColor: `transparent transparent transparent ${this.config.borderColor}`,
       }),
     });
-    this.currentDecoration = vscode.window.createTextEditorDecorationType(<
-      vscode.DecorationRenderOptions
-    >{
+    this.currentDecoration = vscode.window.createTextEditorDecorationType({
       backgroundColor: this.config.backgroundColor,
       isWholeLine: this.config.wholeLine,
     });
@@ -431,5 +478,104 @@ export class BlockHighlighter {
     if (this.currentDecoration) {
       this.currentDecoration.dispose();
     }
+  }
+
+  /**
+   * Highlight a block in HTML Code
+   */
+  highlightHTMLBlock(editor: vscode.TextEditor) {
+    const document = editor.document;
+    const code = document.getText();
+    const newHash = this.hashString(code);
+
+    let root;
+    if (newHash !== this.hash) {
+      console.log(`Parsed HTML`);
+      root = parseHTML(code, {
+        lowerCaseTagName: false,
+        comment: false,
+        blockTextElements: {
+          script: false, // keep text content when parsing
+          noscript: false, // keep text content when parsing
+          style: false, // keep text content when parsing
+          pre: false, // keep text content when parsing
+        },
+      });
+      this.htmlRoot = root;
+      this.hash = newHash;
+    } else {
+      root = this.htmlRoot!;
+    }
+
+    // Recursive function to find the innermost node containing the cursor
+    const findNode = (node: HTMLElement): HTMLElement | null => {
+      if (
+        !node.range ||
+        typeof node.range[0] !== 'number' ||
+        typeof node.range[1] !== 'number'
+      )
+        return null;
+
+      const [startOffset, endOffset] = node.range;
+
+      const range = new vscode.Range(
+        document.positionAt(startOffset),
+        document.positionAt(endOffset),
+      );
+      if (!range.contains(editor.selection.active)) {
+        return null;
+      }
+      for (const child of node.children) {
+        const result = findNode(child);
+        if (result) return result;
+      }
+      return node;
+    };
+    const targetNode = findNode(root!);
+    if (!targetNode || !targetNode.range) {
+      this.unhighlightAll();
+      return;
+    }
+
+    const [startOffset, endOffset] = targetNode.range;
+    let range = new vscode.Range(
+      document.positionAt(startOffset),
+      document.positionAt(endOffset),
+    );
+    // Handle the case if the selected tag is script and we can highlight based on brackets
+    script: if (
+      ['style', 'script'].includes(targetNode.tagName.toLowerCase())
+    ) {
+      const top = this.findTop(editor);
+      if (!top) {
+        break script;
+      }
+      const bottom = this.findBottom(editor, [top]);
+
+      if (!top || !bottom) {
+        break script;
+      }
+      // Assign the range directly as we know it will always be smaller than the script tag
+      range = new vscode.Range(top.pos, bottom.end);
+    }
+
+    this.highlightRange(editor, range);
+  }
+
+  /**
+   * Highlight a code block based on indentation
+   * Used for languages like python,yml,haskell etc
+   */
+  highlightBasedOnIndent(editor: vscode.TextEditor) {
+    const range = this.indentHighlighter.getRange(editor);
+    if (range) {
+      this.highlightRange(editor, range);
+    } else {
+      this.unhighlightAll();
+    }
+  }
+
+  dispose() {
+    this.disposable.dispose();
   }
 }

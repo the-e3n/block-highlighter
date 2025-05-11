@@ -51,13 +51,7 @@ export async function activate(context: vscode.ExtensionContext) {
   const highlighter = new BlockHighlighter(config);
 
   // Register the Event listeners for text selection change
-  context.subscriptions.push(
-    vscode.window.onDidChangeTextEditorSelection((event) => {
-      if (event.textEditor) {
-        highlighter.highlight();
-      }
-    }),
-  );
+  context.subscriptions.push(highlighter);
   // Check if the rating message should be shown
   handleRatingMessage(context);
 }

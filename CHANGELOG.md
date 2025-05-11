@@ -74,3 +74,14 @@ Initial Release
 ## [v1.2.7]
 
 - REMOVE: The event listener for onDidChangeDocument as it was causing the extension to flicker when highlighting
+
+## [v2.0.0]
+
+- FIX: Issue where if no file is open when starting VSCode the extension would not work properly
+- Modularize the code to make future development easier
+
+## [v2.1.0]
+
+- ADD: HTML block highlighting with inline js/css support for script/style tags
+- ADD: Indent Based highlighting for languages like python,yaml,haskell.
+- CHANGE: License to GNU
