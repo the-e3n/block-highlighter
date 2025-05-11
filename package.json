@@ -213,11 +213,11 @@
     "@typescript-eslint/parser": "^8.19.0",
     "@vscode/test-cli": "^0.0.10",
     "@vscode/test-electron": "^2.3.8",
+    "@vscode/test-web": "*",
     "esbuild": "^0.24.2",
     "eslint": "^9.17.0",
     "npm-run-all": "^4.1.5",
-    "typescript": "^5.7.2",
-    "@vscode/test-web": "*"
+    "typescript": "^5.7.2"
   },
   "repository": {
     "type": "git",
@@ -227,6 +227,7 @@
     "@babel/parser": "^7.26.3",
     "@babel/traverse": "^7.26.4",
     "esbuild-plugin-polyfill-node": "^0.3.0",
+    "node-html-parser": "^7.0.1",
     "posthog-node": "^4.3.2"
   }
 }
